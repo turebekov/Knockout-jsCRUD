@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Телефонный справочник города Есик</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div id="createModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <form id="personForm"  class="form-group">
+                    <label for="firstName">Имя</label>
+                    <input type="text" id="firstName" data-bind="value: firstName" name="firstName"
+                           class="form-control">
+                    <label for="lastName">Фамилия</label>
+                    <input type="text" id="lastName" data-bind="value: lastName" name="lastName" class="form-control">
+                    <label for="tel">Номер</label>
+                    <input type="text" id="tel" data-bind="value: tel" name="telefon" class="form-control">
+                    <label for="comment">Комментарий</label>
+                    <input type="text" id="comment" data-bind="value: comment" name="comment" class="form-control">
+                    <BR>
+                    <button data-bind="click: addPerson" data-dismiss="modal"> Добавить пользователя</button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="updateModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <form id="personFormUpdate" data-bind="submit: editPerson"   class="form-group">
+                    <input type="hidden" data-bind="value: currentId" value="currentId" name="newId">
+                    <label for="firstNameUpd">Имя</label>
+                    <p data-bind="text: currentFirstName"></p>
+                    <input type="text" id="firstNameUpd" data-bind="value: currentFirstName" value="currentFirstName"
+                           name="newFirstName" class="form-control">
+                    <label for="lastNameUpd">Фамилия</label>
+                    <input type="text" id="lastNameUpd" data-bind="value: currentLastName" value="currentLastName"
+                           name="newLastName" class="form-control">
+                    <label for="telUpd">Номер</label>
+                    <input type="text" id="telUpd" data-bind="value: currentTel" value="currentTel" name="newTelefon"
+                           class="form-control">
+                    <label for="commentUpd">Комментарий</label>
+                    <input type="text" id="commentUpd" data-bind="value: currentComment" value="currentComment"
+                           name="newComment" class="form-control">
+                    <BR>
+                    <button type="submit"> Изменить пользователя</button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <p>
+            <h1>Есік</h1>қаласының телефон анықтамалық орталығы</p>
+            <h1></h1>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+
+                    <th>Имя</th>
+                    <th>Фамилия</th>
+                    <th>Телефон</th>
+                    <th>Комментарий</th>
+                    <th colspan="2">Действие</th>
+                </tr>
+                </thead>
+                <tbody data-bind="foreach: people">
+                <tr>
+                    <td data-bind="text: firstName"></td>
+                    <td data-bind="text: lastName"></td>
+                    <td data-bind="text: tel"></td>
+                    <td data-bind="text: comment"></td>
+                    <td>
+                        <button class="btn btn-danger" data-bind="click: $parent.removePerson">Remove</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-default" data-bind="click: $parent.updatePerson" data-toggle="modal"
+                                data-target="#updateModal">Update
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createModal">Добавить
+                пользователя
+            </button>
+        </div>
+        
+    </div>
+</div>
+
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
+<script type="text/javascript">
+    function PersonTel() {
+
+        var self = this;
+        self.index = ko.observable(0)
+        self.people = ko.observableArray([
+            {id: guid(), firstName: 'Bert', lastName: 'Bertington', tel: '+77271523344', comment: 'commentary'},
+            {id: guid(), firstName: 'Charles', lastName: 'Charlesforth', tel: '+77271553344', comment: 'comment'},
+            {id: guid(), firstName: 'Denise', lastName: 'Dentiste', tel: '+77271555344', comment: 'comments'}
+        ]);
+
+        self.firstName = ko.observable();
+        self.lastName = ko.observable("");
+        self.tel = ko.observable("");
+        self.comment = ko.observable("");
+
+
+        self.currentFirstName = ko.observable("");
+        self.currentLastName = ko.observable("");
+        self.currentTel = ko.observable("");
+        self.currentComment = ko.observable("");
+        self.currentId = ko.observable("");
+
+        self.addPerson = function () {
+            // self.people.push({ firstName: "New at ", lastName:"new ", tel: "4244", comment: "comment" });
+            if ((self.firstName() != "" && self.lastName() != "" )) {// Prevent blanks and duplicates /*&& (this.allItems.indexOf(this.itemToAdd()) < 0)*/
+                self.people.push({
+                    id: guid(),
+                    firstName: self.firstName(),
+                    lastName: self.lastName(),
+                    tel: self.tel(),
+                    comment: self.comment()
+                });
+                self.firstName("");
+                self.lastName("");
+                self.tel("");
+                self.comment("");
+            }
+        };
+        self.removePerson = function () {
+            self.people.remove(this);
+        }
+
+        self.currentItem = ko.observable();
+
+        self.updatePerson = function (item) {
+            //item.firstName="sadasdsadas";
+            self.currentId(item.id);
+            self.currentItem(item);
+            self.currentFirstName(item.firstName);
+            self.currentLastName(item.lastName);
+            self.currentTel(item.tel);
+            self.currentComment(item.comment);
+
+
+            console.log(self.currentFirstName());
+            console.log(this.firstName);
+        }
+
+        self.editPerson = function (item) {
+            console.log(self.currentItem());
+            console.log(item.newFirstName.value);
+            //console.log(item.currentId.value);
+            console.log( id = (item.newId.value));
+
+
+
+
+            self.people.replace(self.people()[peopleIndex(id)],{
+                id: item.newId.value,
+                firstName: item.newFirstName.value,
+                lastName: item.newLastName.value,
+                tel: item.newTelefon.value,
+                comment: item.newComment.value
+            });
+            //var isPersonExist = self.people().find(self.currentItem());
+            //console.log('isPersonExist='+isPersonExist);
+            //this.firstName(self.currentFirstName());
+
+        }
+        function peopleIndex(id) {
+
+            var i;
+            for (i=0; i < self.people().length; i++)
+            {
+                console.log(self.people()[i].id);
+                if (self.people()[i].id === id)
+                {
+                    return i;
+                }
+
+            }
+        }
+    }
+
+    ko.applyBindings(new PersonTel());
+    function guid() {
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
+    }
+
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+</script>
+
+
+</body>
+</html>
